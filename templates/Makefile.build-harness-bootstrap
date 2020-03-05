@@ -1,0 +1,51 @@
+
+export SHELL = /bin/bash
+export GITHUB_USER ?=
+export GITHUB_TOKEN ?=
+export BUILD_HARNESS_HOST ?= github.com
+export BUILD_HARNESS_HOST_AUTH ?= false
+export BUILD_HARNESS_ORG ?= cloudposse
+export BUILD_HARNESS_PROJECT ?= build-harness
+export BUILD_HARNESS_BRANCH ?= master
+export BUILD_HARNESS_PATH ?= $(shell until [ -d "$(BUILD_HARNESS_PROJECT)" ] || [ "`pwd`" == '/' ]; do cd ..; done; pwd)/$(BUILD_HARNESS_PROJECT)
+-include $(BUILD_HARNESS_PATH)/Makefile
+export BUILD_HARNESS_EXTENSIONS_HOST ?= github.com
+export BUILD_HARNESS_EXTENSIONS_HOST_AUTH ?= false
+export BUILD_HARNESS_EXTENSIONS_ORG ?= hassenius
+export BUILD_HARNESS_EXTENSIONS_PROJECT ?= build-harness-extensions
+export BUILD_HARNESS_EXTENSIONS_BRANCH ?= master
+export BUILD_HARNESS_EXTENSIONS_PATH ?= $(shell until [ -d "$(BUILD_HARNESS_EXTENSIONS_PROJECT)" ] || [ "`pwd`" == '/' ]; do cd ..; done; pwd)/$(BUILD_HARNESS_EXTENSIONS_PROJECT)
+-include $(BUILD_HARNESS_EXTENSIONS_PATH)/Makefile
+
+.PHONY : init
+## Init build-harness and extension
+init::
+		@echo $(shell date)
+## Install Build Harness with Conditional authentication
+ifeq ($(BUILD_HARNESS_HOST_AUTH),true)
+	curl --retry 5 --fail --silent --location --location-trusted --retry-delay 1 -H "Authorization: token $(GITHUB_TOKEN)" -H "Accept: application/vnd.github.v3.raw" https://$(BUILD_HARNESS_HOST)/$(BUILD_HARNESS_ORG)/$(BUILD_HARNESS_PROJECT)/raw/$(BUILD_HARNESS_BRANCH)/bin/install.sh | \
+		bash -s "$(BUILD_HARNESS_ORG)" "$(BUILD_HARNESS_PROJECT)" "$(BUILD_HARNESS_BRANCH)" "$(GITHUB_USER)" "$(GITHUB_TOKEN)" "$(BUILD_HARNESS_HOST)"
+else
+	curl --retry 5 --fail --silent --location --retry-delay 1  -H "Accept: application/vnd.github.v3.raw" https://$(BUILD_HARNESS_HOST)/$(BUILD_HARNESS_ORG)/$(BUILD_HARNESS_PROJECT)/raw/$(BUILD_HARNESS_BRANCH)/bin/install.sh | \
+		bash -s "$(BUILD_HARNESS_ORG)" "$(BUILD_HARNESS_PROJECT)" "$(BUILD_HARNESS_BRANCH)" "" "" "$(BUILD_HARNESS_HOST)"
+endif
+
+
+ifeq ($(BUILD_HARNESS_EXTENSIONS_HOST_AUTH),true)
+	curl --retry 5 --fail --silent --location --location-trusted --retry-delay 1 -H "Authorization: token $(GITHUB_TOKEN)" -H "Accept: application/vnd.github.v3.raw" https://$(BUILD_HARNESS_EXTENSIONS_HOST)/$(BUILD_HARNESS_EXTENSIONS_ORG)/$(BUILD_HARNESS_EXTENSIONS_PROJECT)/raw/$(BUILD_HARNESS_EXTENSIONS_BRANCH)/bin/install-extensions.sh | \
+		bash -s "$(BUILD_HARNESS_EXTENSIONS_ORG)" "$(BUILD_HARNESS_EXTENSIONS_PROJECT)" "$(BUILD_HARNESS_EXTENSIONS_BRANCH)" "$(GITHUB_USER)" "$(GITHUB_TOKEN)" "$(BUILD_HARNESS_EXTENSIONS_HOST)"
+else
+	curl --retry 5 --fail --silent --retry-delay 1 --location -H "Accept: application/vnd.github.v3.raw" https://$(BUILD_HARNESS_EXTENSIONS_HOST)/$(BUILD_HARNESS_EXTENSIONS_ORG)/$(BUILD_HARNESS_EXTENSIONS_PROJECT)/raw/$(BUILD_HARNESS_EXTENSIONS_BRANCH)/bin/install-extensions.sh | \
+		bash -s "$(BUILD_HARNESS_EXTENSIONS_ORG)" "$(BUILD_HARNESS_EXTENSIONS_PROJECT)" "$(BUILD_HARNESS_EXTENSIONS_BRANCH)" "" "" "$(BUILD_HARNESS_EXTENSIONS_HOST)"
+endif
+
+
+.PHONY : clean
+## Clean build-harness
+clean::
+	@[ "$(BUILD_HARNESS_EXTENSIONS_PATH)" == '/' ] || \
+	 [ "$(BUILD_HARNESS_EXTENSIONS_PATH)" == '.' ] || \
+	   echo rm -rf $(BUILD_HARNESS_EXTENSIONS_PATH)
+	@[ "$(BUILD_HARNESS_PATH)" == '/' ] || \
+	 [ "$(BUILD_HARNESS_PATH)" == '.' ] || \
+	   echo rm -rf $(BUILD_HARNESS_PATH)
