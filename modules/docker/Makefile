@@ -9,11 +9,3 @@ docker/registry/login: $(DOCKER)
 	$(call assert-set,DOCKER_USERNAME)
 	$(call assert-set,DOCKER_PASSWORD)
 	@$(DOCKER) login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD) $(TARGET_DOCKER_REGISTRY)
-
-docker/semverbuild: $(DOCKER)
-	$(call assert-set,DOCKER)
-	$(call assert-set,TARGET_DOCKER_REGISTRY)
-	$(call assert-set,DOCKER_USERNAME)
-	$(call assert-set,DOCKER_PASSWORD)
-	$(call assert-set,IMAGE_VERSION)
-	@$(SELF) -s docker/build ARGS="IMAGE_VERSION"
