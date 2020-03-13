@@ -23,4 +23,4 @@ fi
 
 echo "Cloning ${GITHUB_REPO}#${BUILD_HARNESS_EXTENSIONS_BRANCH}..."
 # Note - whatever the extension project's name, we're calling it 'build-harness-extensions'
-git clone -b $BUILD_HARNESS_EXTENSIONS_BRANCH $GITHUB_REPO_SECRET$GITHUB_REPO build-harness-extensions
+git clone -c advice.detachedHead=false --depth=1 -b $BUILD_HARNESS_EXTENSIONS_BRANCH $GITHUB_REPO_SECRET$GITHUB_REPO build-harness-extensions
