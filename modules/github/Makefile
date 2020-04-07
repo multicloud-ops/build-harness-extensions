@@ -1,4 +1,8 @@
 
+github/echo/test:
+	echo ${GITHUB_REPO_OWNER}
+	echo ${GITHUB_REPO}
+
 github/branch-protect:
 	for row in $(curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" https://github.ibm.com/api/v3/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/branches | jq -rc '.[]'); do
 	release=$(echo ${row} | jq -r '.name' | grep "release")
@@ -27,4 +31,3 @@ github/webhook-setup:
 		}
 	}' https://github.ibm.com/api/v3/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/hooks
 
-	
