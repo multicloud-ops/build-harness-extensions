@@ -18,4 +18,9 @@ operatorsdk/install:
 
 ## Run operator-sdk build on $TARGET_DOCKER_REGISTRY/$IMAGE_NAME:$TARGET_VERSION
 operatorsdk/build: operatorsdk/install
-	$(OPERATORSDK) build $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION)
+	@BUILD_ARGS=`for arg in $$ARGS; do \
+		printf -- '--build-arg %s=%s ' "$$arg" "$${!arg}"; \
+	done`; \
+	[ -z $(GO_LDFLAGS) ] || GO_ARGS="-ldflags $(GO_LDFLAGS)" ; \
+	echo "Building operator with image build args $$BUILD_ARGS and GO args $$GO_ARGS" ; \
+	$(OPERATORSDK) build --go-build-args "$$GO_ARGS" --image-build-args "$$BUILD_ARGS" $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION)
