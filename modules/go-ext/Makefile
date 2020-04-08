@@ -22,6 +22,7 @@ SOURCE_DIR ?= $(pwd)
 #     will switch to SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
 go-ext/build: $(GO)
+	$(call assert-set,GO)
 	$(call assert-set,PACKAGES)
 	cd $(SOURCE_DIR) && $(GO) build $(PACKAGES)
 
@@ -31,6 +32,7 @@ go-ext/build: $(GO)
 #   PACKAGES:
 #     One or more packages to get.  Example:  PACKAGES=github.com/fsnotify/fsnotify
 go-ext/get: $(GO)
+	$(call assert-set,GO)
 	$(call assert-set,PACKAGES)
 	$(GO) get -u -v $(PACKAGES)
 
@@ -44,6 +46,7 @@ go-ext/get: $(GO)
 #     will switch to SOURCE_DIR before installing the packages.  Default:
 #     the current working directory.
 go-ext/install: $(GO)
+	$(call assert-set,GO)
 	$(call assert-set,PACKAGES)
 	cd $(SOURCE_DIR) && $(GO) install $(PACKAGES)
 
@@ -59,5 +62,6 @@ go-ext/install: $(GO)
 #     will switch to SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
 go-ext/test: $(GO)
+	$(call assert-set,GO)
 	$(call assert-set,PACKAGES)
 	cd $(SOURCE_DIR) && $(GO) test -count=$(COUNT) $(PACKAGES)
