@@ -8,6 +8,7 @@
 #-----------------------------------------------------------------------
 
 GO := $(shell which go 2>/dev/null)
+COUNT ?= 1
 PACKAGES ?=
 SOURCE_DIR ?= $(pwd)
 
