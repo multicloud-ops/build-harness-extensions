@@ -8,6 +8,7 @@
 #-----------------------------------------------------------------------
 
 GO := $(shell which go 2>/dev/null)
+COUNT ?= 1
 PACKAGES ?=
 SOURCE_DIR ?= $(pwd)
 
@@ -45,3 +46,18 @@ go-ext/get: $(GO)
 go-ext/install: $(GO)
 	$(call assert-set,PACKAGES)
 	cd $(SOURCE_DIR) && $(GO) install $(PACKAGES)
+
+# Tests one or more packages.
+#
+# Variables:
+#   COUNT:
+#     The number of times to run the tests.  Default: one.
+#   PACKAGES:
+#     One or more packages to test.  Example:  PACKAGES="./util ./web"
+#   SOURCE_DIR:
+#     Typically, the parent directory containing PACKAGES.  This target
+#     will switch to SOURCE_DIR before building the packages.  Default:
+#     the current working directory.
+go-ext/test: $(GO)
+	$(call assert-set,PACKAGES)
+	cd $(SOURCE_DIR) && $(GO) test -count=$(COUNT) $(PACKAGES)
