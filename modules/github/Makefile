@@ -16,6 +16,6 @@ github/update-tag:
 
 github/webhook-setup:
 	curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" \
-	-d '{"name": "web","events": [ "issues" ],"config": {"url": "${RELEASE_CUTTER_URL}","content_type": "json","insecure_ssl": "1","secret": "${RELEASE_CUTTER_SECRET}"}}' \
+	-d '{"name": "web","events": [ "issues" ],"config": {"url": "${RELEASE_CUTTER_URL}","content_type": "json","insecure_ssl": "0","secret": "${RELEASE_CUTTER_SECRET}"}}' \
 	https://github.ibm.com/api/v3/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/hooks
 
