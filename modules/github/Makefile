@@ -21,3 +21,15 @@ github/webhook-setup:
 	-d '{"name": "web","events": [ "issues" ],"config": {"url": "${RELEASE_CUTTER_URL}","content_type": "json","insecure_ssl": "0","secret": "${RELEASE_CUTTER_SECRET}"}}' \
 	https://github.ibm.com/api/v3/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/hooks
 
+github/travis-setup:
+	curl -X POST -sSL -H "Authorization: token ${TRAVIS_TOKEN}" \
+	-H "Travis-API-Version: 3" \
+	https://travis.ibm.com/repo/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/activate
+	curl -X POST -sSL -H "Authorization: token ${TRAVIS_TOKEN}" \
+	-H "Travis-API-Version: 3" \
+	-d '{ "env_var.value": "${DOCKER_USERNAME}", "env_var.public": false}' \
+	https://travis.ibm.com/repo/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/env_var/DOCKER_USERNAME
+	curl -X POST -sSL -H "Authorization: token ${TRAVIS_TOKEN}" \
+	-H "Travis-API-Version: 3" \
+	-d '{ "env_var.value": "${DOCKER_PASSWORD}", "env_var.public": false}' \
+	https://travis.ibm.com/repo/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/env_var/DOCKER_PASSWORD
