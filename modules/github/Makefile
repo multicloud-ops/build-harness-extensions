@@ -24,12 +24,14 @@ github/webhook-setup:
 github/travis-setup:
 	curl -X POST -sSL -H "Authorization: token ${TRAVIS_TOKEN}" \
 	-H "Travis-API-Version: 3" \
-	https://travis.ibm.com/repo/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/activate
+	https://travis.ibm.com/api/repo/${GITHUB_REPO_OWNER}%2F${GITHUB_REPO}/activate
+
 	curl -X POST -sSL -H "Authorization: token ${TRAVIS_TOKEN}" \
 	-H "Travis-API-Version: 3" \
 	-d '{ "env_var.value": "${DOCKER_USERNAME}", "env_var.public": false}' \
-	https://travis.ibm.com/repo/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/env_var/DOCKER_USERNAME
+	https://travis.ibm.com/repo/${GITHUB_REPO_OWNER}%2F${GITHUB_REPO}/env_var/DOCKER_USERNAME
+	
 	curl -X POST -sSL -H "Authorization: token ${TRAVIS_TOKEN}" \
 	-H "Travis-API-Version: 3" \
 	-d '{ "env_var.value": "${DOCKER_PASSWORD}", "env_var.public": false}' \
-	https://travis.ibm.com/repo/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/env_var/DOCKER_PASSWORD
+	https://travis.ibm.com/repo/${GITHUB_REPO_OWNER}%2F${GITHUB_REPO}/env_var/DOCKER_PASSWORD
