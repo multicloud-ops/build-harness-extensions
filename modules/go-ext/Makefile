@@ -21,6 +21,7 @@ SOURCE_DIR ?= $(pwd)
 #     Typically, the parent directory containing PACKAGES.  This target
 #     will switch to SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
+## Builds one or more packages
 go-ext/build: $(GO)
 	$(call assert-set,PACKAGES)
 	cd $(SOURCE_DIR) && $(GO) build $(PACKAGES)
@@ -30,6 +31,7 @@ go-ext/build: $(GO)
 # Variables:
 #   PACKAGES:
 #     One or more packages to get.  Example:  PACKAGES=github.com/fsnotify/fsnotify
+## Gets one or more packages
 go-ext/get: $(GO)
 	$(call assert-set,PACKAGES)
 	$(GO) get -u -v $(PACKAGES)
@@ -43,6 +45,7 @@ go-ext/get: $(GO)
 #     Typically, the parent directory containing PACKAGES.  This target
 #     will switch to SOURCE_DIR before installing the packages.  Default:
 #     the current working directory.
+## Installs one or more packages
 go-ext/install: $(GO)
 	$(call assert-set,PACKAGES)
 	cd $(SOURCE_DIR) && $(GO) install $(PACKAGES)
@@ -58,6 +61,7 @@ go-ext/install: $(GO)
 #     Typically, the parent directory containing PACKAGES.  This target
 #     will switch to SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
+## Tests one or more packages
 go-ext/test: $(GO)
 	$(call assert-set,PACKAGES)
 	cd $(SOURCE_DIR) && $(GO) test -count=$(COUNT) $(PACKAGES)
