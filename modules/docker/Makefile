@@ -30,7 +30,6 @@ PLATFORMS ?= amd64 ppc64le s390x
 #   TARGET_DOCKER_REGISTRY
 #     The name of the Docker registry.
 ## Builds a "fat" (multi-platform) Docker manifest
-.PHONY: docker/fatmanifest/build
 docker/fatmanifest/build: docker/fatmanifest/config
 	$(call assert-set,DOCKER)
 	$(call assert-set,DOCKER_IMAGE_NAME)
