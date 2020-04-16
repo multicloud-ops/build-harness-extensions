@@ -3,6 +3,7 @@ TARGET_DOCKER_REGISTRY ?=
 
 ## Login to private container registry $(TARGET_DOCKER_REGISTRY) as $(DOCKER_USERNAME) $(DOCKER_PASSWORD)
 .PHONY: docker/registry/login
+## Login to private container registry $(TARGET_DOCKER_REGISTRY) as $(DOCKER_USERNAME) $(DOCKER_PASSWORD)
 docker/registry/login: $(DOCKER)
 	$(call assert-set,DOCKER)
 	$(call assert-set,TARGET_DOCKER_REGISTRY)
