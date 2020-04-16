@@ -1,5 +1,5 @@
 OPERATORSDK ?= $(BUILD_HARNESS_EXTENSIONS_PATH)/vendor/operator-sdk
-OPERATORSDK_VERSION ?= v0.15.2
+OPERATORSDK_VERSION ?= v0.15.1
 OPERATORSDK_URL ?= https://github.com/operator-framework/operator-sdk/releases/download/$(OPERATORSDK_VERSION)/operator-sdk-$(OPERATORSDK_VERSION)-x86_64-
 ifeq ($(BUILD_HARNESS_OS), darwin)
 	OPERATORSDK_INSTALL_OS=apple-darwin
