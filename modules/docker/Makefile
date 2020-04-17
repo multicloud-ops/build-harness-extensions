@@ -53,8 +53,7 @@ docker/fatmanifest/build: docker/fatmanifest/config
 #     The password for the Docker user name.
 #   TARGET_DOCKER_REGISTRY
 #     The name of the Docker registry.
-## Logs in to a Docker registry.
-.PHONY: docker/registry/login
+## Logs in to a private container registry $(TARGET_DOCKER_REGISTRY) as $(DOCKER_USERNAME) $(DOCKER_PASSWORD)
 docker/registry/login:
 	$(call assert-set,DOCKER)
 	$(call assert-set,DOCKER_USERNAME)
