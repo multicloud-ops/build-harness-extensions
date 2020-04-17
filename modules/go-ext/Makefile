@@ -7,57 +7,69 @@
 # restricted by GSA ADP Schedule Contract with IBM Corporation.
 #-----------------------------------------------------------------------
 
-GO := $(shell which go 2>/dev/null)
-COUNT ?= 1
-PACKAGES ?=
-SOURCE_DIR ?= $(pwd)
+GO ?= $(shell which go 2>/dev/null)
+GOEXT_COUNT ?= 1
+GOEXT_PACKAGES ?=
+GOEXT_SOURCE_DIR != pwd
 
 # Builds one or more packages.
 #
 # Variables:
-#   PACKAGES:
-#     One or more packages to build.  Example:  PACKAGES="./util ./web"
-#   SOURCE_DIR:
-#     Typically, the parent directory containing PACKAGES.  This target
-#     will switch to SOURCE_DIR before building the packages.  Default:
+#   GOEXT_PACKAGES:
+#     One or more packages to build.  Example:  GOEXT_PACKAGES="./util ./web"
+#   GOEXT_SOURCE_DIR:
+#     Typically, the parent directory containing GOEXT_PACKAGES.  This target
+#     will switch to GOEXT_SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
-go-ext/build: $(GO)
-	$(call assert-set,PACKAGES)
-	cd $(SOURCE_DIR) && $(GO) build $(PACKAGES)
+## Builds one or more packages
+.PHONY: go/ext/build
+go/ext/build:
+	$(call assert-set,GO)
+	$(call assert-set,GOEXT_PACKAGES)
+	cd $(GOEXT_SOURCE_DIR) && $(GO) build $(GOEXT_PACKAGES)
 
 # Gets one or more packages.
 #
 # Variables:
-#   PACKAGES:
-#     One or more packages to get.  Example:  PACKAGES=github.com/fsnotify/fsnotify
-go-ext/get: $(GO)
-	$(call assert-set,PACKAGES)
-	$(GO) get -u -v $(PACKAGES)
+#   GOEXT_PACKAGES:
+#     One or more packages to get.  Example:  GOEXT_PACKAGES=github.com/fsnotify/fsnotify
+## Gets one or more packages
+.PHONY: go/ext/get
+go/ext/get:
+	$(call assert-set,GO)
+	$(call assert-set,GOEXT_PACKAGES)
+	$(GO) get -u -v $(GOEXT_PACKAGES)
 
 # Installs one or more packages.
 #
 # Variables:
-#   PACKAGES:
-#     One or more packages to install.  Example:  PACKAGES=./server"
-#   SOURCE_DIR:
-#     Typically, the parent directory containing PACKAGES.  This target
-#     will switch to SOURCE_DIR before installing the packages.  Default:
+#   GOEXT_PACKAGES:
+#     One or more packages to install.  Example:  GOEXT_PACKAGES=./server"
+#   GOEXT_SOURCE_DIR:
+#     Typically, the parent directory containing GOEXT_PACKAGES.  This target
+#     will switch to GOEXT_SOURCE_DIR before installing the packages.  Default:
 #     the current working directory.
-go-ext/install: $(GO)
-	$(call assert-set,PACKAGES)
-	cd $(SOURCE_DIR) && $(GO) install $(PACKAGES)
+## Installs one or more packages.
+.PHONY: go/ext/install
+go/ext/install:
+	$(call assert-set,GO)
+	$(call assert-set,GOEXT_PACKAGES)
+	cd $(GOEXT_SOURCE_DIR) && $(GO) install $(GOEXT_PACKAGES)
 
 # Tests one or more packages.
 #
 # Variables:
-#   COUNT:
+#   GOEXT_COUNT:
 #     The number of times to run the tests.  Default: one.
-#   PACKAGES:
-#     One or more packages to test.  Example:  PACKAGES="./util ./web"
-#   SOURCE_DIR:
-#     Typically, the parent directory containing PACKAGES.  This target
-#     will switch to SOURCE_DIR before building the packages.  Default:
+#   GOEXT_PACKAGES:
+#     One or more packages to test.  Example:  GOEXT_PACKAGES="./util ./web"
+#   GOEXT_SOURCE_DIR:
+#     Typically, the parent directory containing GOEXT_PACKAGES.  This target
+#     will switch to GOEXT_SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
-go-ext/test: $(GO)
-	$(call assert-set,PACKAGES)
-	cd $(SOURCE_DIR) && $(GO) test -count=$(COUNT) $(PACKAGES)
+## Tests one or more packages
+.PHONY: go/ext/test
+go/ext/test:
+	$(call assert-set,GO)
+	$(call assert-set,GOEXT_PACKAGES)
+	cd $(GOEXT_SOURCE_DIR) && $(GO) test -count=$(GOEXT_COUNT) $(GOEXT_PACKAGES)
