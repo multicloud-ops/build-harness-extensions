@@ -12,6 +12,7 @@ GOEXT_COUNT ?= 1
 GOEXT_PACKAGES ?=
 GOEXT_SOURCE_DIR != pwd
 
+.PHONY: go/ext/build
 # Builds one or more packages.
 #
 # Variables:
@@ -22,24 +23,24 @@ GOEXT_SOURCE_DIR != pwd
 #     will switch to GOEXT_SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
 ## Builds one or more packages
-.PHONY: go/ext/build
 go/ext/build:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)
 	cd $(GOEXT_SOURCE_DIR) && $(GO) build $(GOEXT_PACKAGES)
 
+.PHONY: go/ext/get
 # Gets one or more packages.
 #
 # Variables:
 #   GOEXT_PACKAGES:
 #     One or more packages to get.  Example:  GOEXT_PACKAGES=github.com/fsnotify/fsnotify
 ## Gets one or more packages
-.PHONY: go/ext/get
 go/ext/get:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)
 	$(GO) get -u -v $(GOEXT_PACKAGES)
 
+.PHONY: go/ext/install
 # Installs one or more packages.
 #
 # Variables:
@@ -50,12 +51,12 @@ go/ext/get:
 #     will switch to GOEXT_SOURCE_DIR before installing the packages.  Default:
 #     the current working directory.
 ## Installs one or more packages.
-.PHONY: go/ext/install
 go/ext/install:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)
 	cd $(GOEXT_SOURCE_DIR) && $(GO) install $(GOEXT_PACKAGES)
 
+.PHONY: go/ext/test
 # Tests one or more packages.
 #
 # Variables:
@@ -68,7 +69,6 @@ go/ext/install:
 #     will switch to GOEXT_SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
 ## Tests one or more packages
-.PHONY: go/ext/test
 go/ext/test:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)

@@ -44,6 +44,7 @@ docker/fatmanifest/build: docker/fatmanifest/config
 	$(DOCKER) --config $(CONFIG_FOLDER) manifest push --purge $(DOCKER_IMAGE_NAME)
 	rm -rf $(CONFIG_FOLDER)
 
+.PHONY: docker/registry/login
 # Logs in to a Docker registry.
 #
 # Variables:
