@@ -7,12 +7,15 @@
 # restricted by GSA ADP Schedule Contract with IBM Corporation.
 #-----------------------------------------------------------------------
 
-GO ?= $(shell which go 2>/dev/null)
 GOEXT_COUNT ?= 1
+GOEXT_CWD := $(shell pwd -P)
 GOEXT_PACKAGES ?=
-GOEXT_SOURCE_DIR != pwd
+GOEXT_SOURCE_DIR ?= $(GOEXT_CWD)
 
-.PHONY: go/ext/build
+GOEXT_VENDOR_PATH := $(BUILD_HARNESS_EXTENSIONS_PATH)/vendor/goext
+GOEXT_GOSEC_DIR := $(GOEXT_VENDOR_PATH)/gosec
+GOEXT_TMP_DIR := $(GOEXT_VENDOR_PATH)/tmp
+
 # Builds one or more packages.
 #
 # Variables:
@@ -23,24 +26,45 @@ GOEXT_SOURCE_DIR != pwd
 #     will switch to GOEXT_SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
 ## Builds one or more packages
+.PHONY: go/ext/build
 go/ext/build:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)
 	cd $(GOEXT_SOURCE_DIR) && $(GO) build $(GOEXT_PACKAGES)
 
-.PHONY: go/ext/get
 # Gets one or more packages.
 #
 # Variables:
 #   GOEXT_PACKAGES:
 #     One or more packages to get.  Example:  GOEXT_PACKAGES=github.com/fsnotify/fsnotify
 ## Gets one or more packages
+.PHONY: go/ext/get
 go/ext/get:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)
-	$(GO) get -u -v $(GOEXT_PACKAGES)
+	$(GO) get -u $(GOEXT_PACKAGES)
 
-.PHONY: go/ext/install
+# Runs a gosec scan.
+#
+# Variables:
+#   GOEXT_GOSEC_DIR:
+#     The directory against which gosec should be run.
+.PHONY: go/ext/gosec
+## Runs a gosec scan
+go/ext/gosec:
+	$(call assert-set,GO)
+	$(call assert-set,GOEXT_GOSEC_DIR)
+	mkdir -p $(GOEXT_GOSEC_DIR)
+	export GOPATH=$(GOEXT_TMP_DIR) && \
+	$(GO) get -u github.com/securego/gosec/cmd/gosec && \
+	cd $(GOEXT_GOSEC_DIR) && \
+	OUTPUT=$(GOEXT_GOSEC_DIR)/$$(basename $$(pwd))_gosec.txt && \
+	$${GOPATH}/bin/gosec -fmt=text -out=$${OUTPUT} ./... && \
+	echo Output written to $${OUTPUT}: && \
+	cat $${OUTPUT}
+	chmod -R +w \$(GOEXT_TMP_DIR)
+	rm -rf $(GOEXT_TMP_DIR)
+
 # Installs one or more packages.
 #
 # Variables:
@@ -51,12 +75,12 @@ go/ext/get:
 #     will switch to GOEXT_SOURCE_DIR before installing the packages.  Default:
 #     the current working directory.
 ## Installs one or more packages.
+.PHONY: go/ext/install
 go/ext/install:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)
 	cd $(GOEXT_SOURCE_DIR) && $(GO) install $(GOEXT_PACKAGES)
 
-.PHONY: go/ext/test
 # Tests one or more packages.
 #
 # Variables:
@@ -69,6 +93,7 @@ go/ext/install:
 #     will switch to GOEXT_SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
 ## Tests one or more packages
+.PHONY: go/ext/test
 go/ext/test:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)

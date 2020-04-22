@@ -11,8 +11,8 @@ DOCKER_USERNAME ?=
 DOCKER_PASSWORD ?=
 TARGET_DOCKER_REGISTRY ?=
 
-CONFIG_FOLDER := dockerConfig
-PLATFORMS ?= amd64 ppc64le s390x
+DOCKER_CFG_FOLDER := $(BUILD_HARNESS_EXTENSIONS_PATH)/vendor/docker
+DOCKER_PLATFORMS ?= amd64 ppc64le s390x
 
 # Builds a "fat" (multi-platform) Docker manifest.
 # Target docker/registry/login should be called first.
@@ -24,7 +24,8 @@ PLATFORMS ?= amd64 ppc64le s390x
 #   DOCKER_USERNAME
 #     The user name with which to log in to the registry.
 #   DOCKER_PASSWORD
-#     The password for the Docker user name.#   PLATFORMS
+#     The password for the Docker user name.
+#   DOCKER_PLATFORMS
 #     The platforms to include in the manifest.  Default:
 #     "amd64 ppc64le s290x".
 #   TARGET_DOCKER_REGISTRY
@@ -33,18 +34,17 @@ PLATFORMS ?= amd64 ppc64le s390x
 docker/fatmanifest/build: docker/fatmanifest/config
 	$(call assert-set,DOCKER)
 	$(call assert-set,DOCKER_IMAGE_NAME)
-	$(call assert-set,PLATFORMS)
+	$(call assert-set,DOCKER_PLATFORMS)
 	$(call assert-set,TARGET_DOCKER_REGISTRY)
-	$(eval IMAGES := $(foreach platform, $(PLATFORMS), $(DOCKER_IMAGE_NAME)_$(platform)))
-	echo $(DOCKER_PASSWORD) | $(DOCKER) --config $(CONFIG_FOLDER) login -u $(DOCKER_USERNAME) --password-stdin $(TARGET_DOCKER_REGISTRY)
-	$(DOCKER) --config $(CONFIG_FOLDER) manifest create $(DOCKER_IMAGE_NAME) $(IMAGES)
-	$(DOCKER) --config $(CONFIG_FOLDER) manifest inspect $(DOCKER_IMAGE_NAME)
+	$(eval IMAGES := $(foreach platform, $(DOCKER_PLATFORMS), $(DOCKER_IMAGE_NAME)_$(platform)))
+	echo $(DOCKER_PASSWORD) | $(DOCKER) --config $(DOCKER_CFG_FOLDER) login -u $(DOCKER_USERNAME) --password-stdin $(TARGET_DOCKER_REGISTRY)
+	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest create $(DOCKER_IMAGE_NAME) $(IMAGES)
+	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest inspect $(DOCKER_IMAGE_NAME)
 
 	# Use --purge to remove local cache of manifest lists.
-	$(DOCKER) --config $(CONFIG_FOLDER) manifest push --purge $(DOCKER_IMAGE_NAME)
-	rm -rf $(CONFIG_FOLDER)
+	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest push --purge $(DOCKER_IMAGE_NAME)
+	rm -rf $(DOCKER_CFG_FOLDER)
 
-.PHONY: docker/registry/login
 # Logs in to a Docker registry.
 #
 # Variables:
@@ -66,5 +66,5 @@ docker/registry/login:
 
 .PHONY: docker/fatmanifest/config
 docker/fatmanifest/config:
-	mkdir -p $(CONFIG_FOLDER)
-	echo '{ "experimental": "enabled" }' > $(CONFIG_FOLDER)/config.json
+	mkdir -p $(DOCKER_CFG_FOLDER)
+	echo '{ "experimental": "enabled" }' > $(DOCKER_CFG_FOLDER)/config.json
