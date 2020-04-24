@@ -8,13 +8,18 @@
 #-----------------------------------------------------------------------
 
 GOEXT_COUNT ?= 1
-GOEXT_CWD := $(shell pwd -P)
 GOEXT_PACKAGES ?=
-GOEXT_SOURCE_DIR ?= $(GOEXT_CWD)
+GOEXT_SOURCE_DIR ?= $(shell pwd -P)
 
-GOEXT_VENDOR_PATH := $(BUILD_HARNESS_EXTENSIONS_PATH)/vendor/goext
-GOEXT_GOSEC_DIR := $(GOEXT_VENDOR_PATH)/gosec
+GOEXT_VENDOR_PATH := $(BUILD_HARNESS_EXTENSIONS_PATH)/vendor
 GOEXT_TMP_DIR := $(GOEXT_VENDOR_PATH)/tmp
+
+GOSEC_DIR := $(GOEXT_VENDOR_PATH)/gosec
+
+GOSEC_BIN_DIR := $(GOSEC_DIR)/bin
+GOSEC_SOURCE_DIR ?= $(shell pwd -P)
+GOSEC_TARGET_DIR ?= $(GOSEC_SOURCE_DIR)
+GOSEC_TARGET_FILE ?= gosec-results.txt
 
 # Builds one or more packages.
 #
@@ -47,23 +52,34 @@ go/ext/get:
 # Runs a gosec scan.
 #
 # Variables:
-#   GOEXT_GOSEC_DIR:
+#   GOSEC_SOURCE_DIR:
 #     The directory against which gosec should be run.
-.PHONY: go/ext/gosec
+#     This directory will be recursively scanned for go files.
+#     Default:  the current working directory.
+#   GOSEC_TARGET_DIR:
+#     The directory to which the gosec results are written.
+#     Default:  The current working directory.
+#   GOSEC_TARGET_FILE:
+#     The file to which the gosec results are written.
+#     Default:  gosec-results.txt
+..PHONY: go/ext/gosec
 ## Runs a gosec scan
 go/ext/gosec:
 	$(call assert-set,GO)
-	$(call assert-set,GOEXT_GOSEC_DIR)
-	mkdir -p $(GOEXT_GOSEC_DIR)
-	export GOPATH=$(GOEXT_TMP_DIR) && \
-	$(GO) get -u github.com/securego/gosec/cmd/gosec && \
-	cd $(GOEXT_GOSEC_DIR) && \
-	OUTPUT=$(GOEXT_GOSEC_DIR)/$$(basename $$(pwd))_gosec.txt && \
-	$${GOPATH}/bin/gosec -fmt=text -out=$${OUTPUT} ./... && \
+	$(call assert-set,GOSEC_SOURCE_DIR)
+	$(call assert-set,GOSEC_TARGET_DIR)
+	$(call assert-set,GOSEC_TARGET_FILE)
+	mkdir -p $(GOSEC_BIN_DIR)
+	mkdir -p $(GOSEC_TARGET_DIR)
+	export GOPATH=$(GOSEC_DIR) && \
+	[ -f $(GOSEC_BIN_DIR)/gosec ] || $(GO) get -u github.com/securego/gosec/cmd/gosec && \
+	cd $(GOSEC_SOURCE_DIR) && \
+	OUTPUT=$(GOSEC_TARGET_DIR)/$(GOSEC_TARGET_FILE) && \
+	$(GOSEC_BIN_DIR)/gosec -fmt=text -out=$${OUTPUT} ./... && \
 	echo Output written to $${OUTPUT}: && \
 	cat $${OUTPUT}
-	chmod -R +w \$(GOEXT_TMP_DIR)
-	rm -rf $(GOEXT_TMP_DIR)
+	#chmod -R +w \$(GOEXT_TMP_DIR)
+	#rm -rf $(GOEXT_TMP_DIR)
 
 # Installs one or more packages.
 #
