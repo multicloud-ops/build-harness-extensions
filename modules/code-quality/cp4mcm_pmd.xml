@@ -1,0 +1,40 @@
+<ruleset name="Custom Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        Cloudpak for MCM custom rules.
+    </description>
+
+    <rule ref="category/java/bestpractices.xml">
+    </rule>
+
+    <rule ref="category/java/codestyle.xml">
+        <exclude name="LongVariable"/>
+    </rule>
+
+    <rule ref="category/java/design.xml">
+        <exclude name="LoosePackageCoupling"/>
+    </rule>
+
+    <rule ref="category/java/documentation.xml">
+        <exclude name="CommentRequired"/>
+        <exclude name="CommentSize"/>
+    </rule>
+
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="BeanMembersShouldSerialize"/>
+        <exclude name="DataflowAnomalyAnalysis"/>
+    </rule>
+
+    <rule ref="category/java/multithreading.xml">
+    </rule>
+
+    <rule ref="category/java/performance.xml">
+        <exclude name="RedundantFieldInitializer"/>
+
+    </rule>
+    <rule ref="category/java/security.xml">
+    </rule>
+</ruleset>
