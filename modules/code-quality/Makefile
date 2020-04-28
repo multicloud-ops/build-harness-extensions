@@ -64,6 +64,8 @@ code-quality/go/gosec:
 	$(GOSEC_BIN_DIR)/gosec -fmt=text -out=$${OUTPUT} ./... && \
 	echo Output written to $${OUTPUT}: && \
 	cat $${OUTPUT}
+	# This is annoying, but Go makes the pkg directory read only.
+	chmod -R +w ${GOSEC_DIR}
 
 
 # Runs Checkstyle on one or more Java files.
