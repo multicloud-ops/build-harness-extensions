@@ -23,3 +23,6 @@ export SEMVERSION_CANONICAL = $(SEMVERSION_GIT_CANONICAL)$(SEMVERSION_CANONICAL_
 else
 export SEMVERSION_CANONICAL = $(SEMVERSION_GIT_CANONICAL)
 endif
+
+# Determine the root of the current branch
+export SEMVERSION_MAJOR_MINOR ?= $(shell $(GIT) describe --abbrev=0)
