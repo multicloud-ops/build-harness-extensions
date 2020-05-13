@@ -46,4 +46,4 @@ operatorsdk/build: operatorsdk/install
 	done`; \
 	[ -n $(GO_LDFLAGS) ] && GO_ARGS="-ldflags $(GO_LDFLAGS)" ; \
 	echo "Building operator with image build args $$BUILD_ARGS and GO args $$GO_ARGS" ; \
-	$(OPERATORSDK) build --go-build-args "$$GO_ARGS" --image-build-args "$$BUILD_ARGS" $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION)
+	$(OPERATORSDK) build --go-build-args "$$GO_ARGS" --image-build-args "$$BUILD_ARGS" $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION)_$(BUILD_HARNESS_ARCH)
