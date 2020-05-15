@@ -83,8 +83,8 @@ code-quality/go/gosec:
 #   JAVA:
 #     The fully qualified path to the "java" executable.
 #     Default:  the output of "which java".
-## Runs Checkstyle on one or more Java files
 .PHONY: code-quality/java/checkstyle
+## Runs Checkstyle on one or more Java files
 code-quality/java/checkstyle:
 	$(call assert-set,CHECKSTYLE_SOURCE)
 	mkdir -p $(CHECKSTYLE_DIR)
@@ -111,8 +111,8 @@ code-quality/java/checkstyle:
 #   JAVA:
 #     The fully qualified path to the "java" executable.
 #     Default:  the output of "which java".
-## Runs PMD on one or more Java files
 .PHONY: code-quality/java/pmd
+## Runs PMD on one or more Java files
 code-quality/java/pmd:
 	$(call assert-set,PMD_SOURCE)
 	mkdir -p $(PMD_DIR)
@@ -152,8 +152,8 @@ code-quality/java/pmd:
 #   JAVA:
 #     The fully qualified path to the "java" executable.
 #     Default:  the output of "which java".
-## Runs Spotbugs on one or more Java files
 .PHONY: code-quality/java/spotbugs
+## Runs Spotbugs on one or more Java files
 code-quality/java/spotbugs:
 	$(call assert-set,SPOTBUGS_SOURCE)
 	mkdir -p $(SPOTBUGS_DIR)

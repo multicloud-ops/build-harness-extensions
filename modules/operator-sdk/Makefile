@@ -12,21 +12,6 @@ endif
 OPERATORSDK_DL := https://github.com/operator-framework/operator-sdk/releases/download
 OPERATORSDK_URL := $(OPERATORSDK_DL)/$(OPERATORSDK_VERSION)/operator-sdk-$(OPERATORSDK_VERSION)-$(OPERATORSDK_ARCH)-$(OPERATORSDK_OS)
 
-# Installs the Operator SDK.
-#
-# Variables:
-#   OPERATORSDK_VERSION:
-#     The operator-sdk version.  Default: 0.17.0.
-## Installs the Operator SDK
-operatorsdk/install:
-	[ -x $(OPERATORSDK) ] || ( \
-		echo "Installing Operator SDK $(OPERATORSDK_VERSION) ($(BUILD_HARNESS_OS)) from $(OPERATORSDK_URL)" && \
-		mkdir -p $(OPERATORSDK_DIR) && \
-		curl '-#' -fL -o $(OPERATORSDK) $(OPERATORSDK_URL) && \
-		chmod a+x $(OPERATORSDK) \
-		)
-	$(OPERATORSDK) version
-
 # Runs a build using the Operator SDK.
 #
 # Variables:
@@ -44,6 +29,22 @@ operatorsdk/build: operatorsdk/install
 	@BUILD_ARGS=`for arg in $$ARGS; do \
 		printf -- '--build-arg %s=%s ' "$$arg" "$${!arg}"; \
 	done`; \
-	[ -n $(GO_LDFLAGS) ] && GO_ARGS="-ldflags $(GO_LDFLAGS)" ; \
+	[ -z $(GO_LDFLAGS) ] || GO_ARGS="-ldflags $(GO_LDFLAGS)" ; \
 	echo "Building operator with image build args $$BUILD_ARGS and GO args $$GO_ARGS" ; \
-	$(OPERATORSDK) build --go-build-args "$$GO_ARGS" --image-build-args "$$BUILD_ARGS" $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION)_$(BUILD_HARNESS_ARCH)
+	$(OPERATORSDK) build --go-build-args "$$GO_ARGS" --image-build-args "$$BUILD_ARGS" $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_ARCH)
+
+# Installs the Operator SDK.
+#
+# Variables:
+#   OPERATORSDK_VERSION:
+#     The operator-sdk version.  Default: 0.17.0.
+.PHONY: operatorsdk/install
+## Installs the Operator SDK
+operatorsdk/install:
+	[ -x $(OPERATORSDK) ] || ( \
+		echo "Installing Operator SDK $(OPERATORSDK_VERSION) ($(BUILD_HARNESS_OS)) from $(OPERATORSDK_URL)" && \
+		mkdir -p $(OPERATORSDK_DIR) && \
+		curl '-#' -fL -o $(OPERATORSDK) $(OPERATORSDK_URL) && \
+		chmod a+x $(OPERATORSDK) \
+		)
+	$(OPERATORSDK) version
