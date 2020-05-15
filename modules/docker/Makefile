@@ -47,7 +47,7 @@ docker/arch/push:
 #     The password for the Docker user name.
 #   DOCKER_PLATFORMS
 #     The platforms to include in the manifest.  Default:
-#     "amd64 ppc64le s290x".
+#     "amd64 ppc64le s390x".
 #   TARGET_DOCKER_REGISTRY
 #     The name of the Docker registry.
 ## Builds a "fat" (multi-platform) Docker manifest
