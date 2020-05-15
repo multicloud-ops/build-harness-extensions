@@ -22,8 +22,8 @@ CHECKSTYLE_TARGET_FILE ?= checkstyle-results.xml
 #   CHECKSTYLE_TARGET_FILE:
 #     The file to which the Checkstyle results are written.
 #     Default:  checkstyle-results.xml.
-## Runs Checkstyle on one or more Java files
 .PHONY: quality/java/checkstyle
+## Runs Checkstyle on one or more Java files
 quality/java/checkstyle:
 	$(call assert-set,CHECKSTYLE_SOURCE)
 	mkdir -p $(CHECKSTYLE_DIR)

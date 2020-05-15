@@ -13,8 +13,8 @@
 #   HELM_CHART_DIR
 #     The directory containing the helm charts.  This is the directory
 #     containing the Chart.yaml file.
-## Lints a set of helm charts
 .PHONY: helm/chart/lint
+## Lints a set of helm charts
 helm/chart/lint:
 	$(call assert-set,HELM_CHART_DIR)
 	cd $(HELM_CHART_DIR) && \
@@ -35,8 +35,8 @@ helm/chart/lint:
 #     The name for the packaged helm charts.
 #   HELM_CHART_VERSION
 #     The version for the packaged helm charts.
-## Packages a set of helm charts
 .PHONY: helm/chart/package
+## Packages a set of helm charts
 helm/chart/package:
 	$(call assert-set,HELM_CHART_DIR)
 	$(call assert-set,HELM_CHART_NAME)

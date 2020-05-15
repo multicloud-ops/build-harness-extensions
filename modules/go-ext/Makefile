@@ -20,8 +20,8 @@ GOEXT_SOURCE_DIR ?= $(shell pwd -P)
 #     Typically, the parent directory containing GOEXT_PACKAGES.  This target
 #     will switch to GOEXT_SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
-## Builds one or more packages
 .PHONY: go/ext/build
+## Builds one or more packages
 go/ext/build:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)
@@ -32,8 +32,8 @@ go/ext/build:
 # Variables:
 #   GOEXT_PACKAGES:
 #     One or more packages to get.  Example:  GOEXT_PACKAGES=github.com/fsnotify/fsnotify
-## Gets one or more packages
 .PHONY: go/ext/get
+## Gets one or more packages
 go/ext/get:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)
@@ -48,8 +48,8 @@ go/ext/get:
 #     Typically, the parent directory containing GOEXT_PACKAGES.  This target
 #     will switch to GOEXT_SOURCE_DIR before installing the packages.  Default:
 #     the current working directory.
-## Installs one or more packages.
 .PHONY: go/ext/install
+## Installs one or more packages.
 go/ext/install:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)
@@ -66,8 +66,8 @@ go/ext/install:
 #     Typically, the parent directory containing GOEXT_PACKAGES.  This target
 #     will switch to GOEXT_SOURCE_DIR before building the packages.  Default:
 #     the current working directory.
-## Tests one or more packages
 .PHONY: go/ext/test
+## Tests one or more packages
 go/ext/test:
 	$(call assert-set,GO)
 	$(call assert-set,GOEXT_PACKAGES)

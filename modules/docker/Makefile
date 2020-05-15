@@ -14,14 +14,32 @@ TARGET_DOCKER_REGISTRY ?=
 DOCKER_CFG_FOLDER := $(BUILD_HARNESS_EXTENSIONS_PATH)/vendor/docker
 DOCKER_PLATFORMS ?= amd64 ppc64le s390x
 
-TARGET_VERSION_LATEST ?= $(SEMVERSION_MAJOR_MINOR)-latest
+TARGET_VERSION_LATEST ?= $(TARGET_VERSION_ARCH)-latest
+
+# Builds an architecture-specific Docker image.
+#
+# Variables:
+#   None
+.PHONY: docker/arch/build
+## Builds an architecture-specific Docker image
+docker/arch/build:
+	$(SELF) docker/build TARGET_VERSION:=$(TARGET_VERSION_ARCH)
+
+# Pushes an architecture-specific Docker image.
+#
+# Variables:
+#   None
+.PHONY: docker/arch/push
+## Pushes an architecture-specific Docker image
+docker/arch/push:
+	$(SELF) docker/image/push TARGET_VERSION:=$(TARGET_VERSION_ARCH)
 
 # Builds a "fat" (multi-platform) Docker manifest.
 # Target docker/registry/login should be called first.
 #
 # Variables:
-#   DOCKER_IMAGE_NAME
-#     The name of the Docker image.  This is often of the
+#   DOCKER_MANIFEST_NAME
+#     The name of the Docker manifest.  This is often of the
 #     form "registry/image:tag".
 #   DOCKER_USERNAME
 #     The user name with which to log in to the registry.
@@ -47,6 +65,29 @@ docker/fatmanifest/build: docker/fatmanifest/config
 	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest push --purge $(DOCKER_IMAGE_NAME)
 	rm -rf $(DOCKER_CFG_FOLDER)
 
+# Retags the current image to meet conventions and pushes
+# the image to the target Docker registry.
+#
+# Variables:
+#   DOCKER_USERNAME
+#     The user name with which to log in to the registry.
+#   DOCKER_PASSWORD
+#     The password for the Docker user name.
+#   TARGET_DOCKER_REGISTRY
+#     The name of the Docker registry.
+.PHONY: docker/image/tag-and-push
+## Retags the current image build to conventions and pushes to the target Docker registry
+docker/image/tag-and-push:
+	$(call assert-set,DOCKER)
+	$(call assert-set,DOCKER_USERNAME)
+	$(call assert-set,DOCKER_PASSWORD)
+	$(call assert-set,TARGET_DOCKER_REGISTRY)
+	@echo "Retagging $(TARGET_VERSION_ARCH) to $(TARGET_VERSION_LATEST)"
+	@$(DOCKER) tag $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_ARCH) $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_LATEST)
+	@$(SELF) -s docker/image/push TARGET_VERSION=$(TARGET_VERSION_ARCH)
+	@$(SELF) -s docker/image/push TARGET_VERSION=$(TARGET_VERSION_LATEST)
+	@echo "digest: $(shell $(DOCKER) inspect $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_ARCH) --format='{{index .RepoDigests 0}}')"
+
 # Logs in to a Docker registry.
 #
 # Variables:
@@ -56,6 +97,7 @@ docker/fatmanifest/build: docker/fatmanifest/config
 #     The password for the Docker user name.
 #   TARGET_DOCKER_REGISTRY
 #     The name of the Docker registry.
+.PHONY: docker/registry/login
 ## Logs in to a private container registry $(TARGET_DOCKER_REGISTRY) as $(DOCKER_USERNAME) $(DOCKER_PASSWORD)
 docker/registry/login:
 	$(call assert-set,DOCKER)
@@ -63,18 +105,6 @@ docker/registry/login:
 	$(call assert-set,DOCKER_PASSWORD)
 	$(call assert-set,TARGET_DOCKER_REGISTRY)
 	@echo $(DOCKER_PASSWORD) | $(DOCKER) login -u $(DOCKER_USERNAME) --password-stdin $(TARGET_DOCKER_REGISTRY)
-
-## Only to be used in CI. Retag the current image build to convention and pushes to $TARGET_DOCKER_REGISTRY/$IMAGE_NAME with all relevant tags
-docker/image/tag-and-push:
-	$(call assert-set,DOCKER)
-	$(call assert-set,DOCKER_USERNAME)
-	$(call assert-set,DOCKER_PASSWORD)
-	$(call assert-set,TARGET_DOCKER_REGISTRY)
-	@echo "Retagging $(TARGET_VERSION) to $(TARGET_VERSION_LATEST)"
-	@$(DOCKER) tag $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION) $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_LATEST)
-	@$(SELF) -s docker/image/push
-	@$(SELF) -s docker/image/push TARGET_VERSION=$(TARGET_VERSION_LATEST)
-	@echo "digest: $(shell $(DOCKER) inspect $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION) --format='{{index .RepoDigests 0}}')"
 
 # Helper targets:
 
