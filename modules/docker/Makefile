@@ -27,6 +27,15 @@ DOCKER_IMAGE_LATEST ?= $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_
 docker/arch/build:
 	$(SELF) docker/build TARGET_VERSION:=$(TARGET_VERSION_ARCH)
 
+# Pushes a architecture-specific Docker image.
+#
+# Variables:
+#   None
+.PHONY: docker/arch/image/push
+## Pushes a architecture-specific Docker image
+docker/arch/image/push:
+	$(SELF) docker/image/push TARGET_VERSION:=$(TARGET_VERSION_ARCH)
+
 # Builds a "fat" (multi-platform) Docker manifest.
 # Target docker/registry/login should be called first.
 #
