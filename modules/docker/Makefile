@@ -77,7 +77,6 @@ docker/image/tag-and-push:
 	@$(DOCKER) tag $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_ARCH) $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_LATEST)
 	@$(SELF) -s docker/image/push TARGET_VERSION=$(TARGET_VERSION_ARCH)
 	@$(SELF) -s docker/image/push TARGET_VERSION=$(TARGET_VERSION_LATEST)
-	@echo "digest: $(shell $(DOCKER) inspect $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_ARCH) --format='{{index .RepoDigests 0}}')"
 
 # Logs in to a Docker registry.
 #
