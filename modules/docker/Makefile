@@ -14,7 +14,9 @@ TARGET_DOCKER_REGISTRY ?=
 DOCKER_CFG_FOLDER := $(BUILD_HARNESS_EXTENSIONS_PATH)/vendor/docker
 DOCKER_PLATFORMS ?= amd64 ppc64le s390x
 
-TARGET_VERSION_LATEST ?= $(TARGET_VERSION_ARCH)-latest
+TARGET_VERSION_LATEST ?= $(SEMVERSION_MAJOR_MINOR)-latest
+
+DOCKER_IMAGE_LATEST ?= $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_LATEST)
 
 # Builds an architecture-specific Docker image.
 #
@@ -29,7 +31,7 @@ docker/arch/build:
 # Target docker/registry/login should be called first.
 #
 # Variables:
-#   DOCKER_MANIFEST_NAME
+#   DOCKER_IMAGE_NAME
 #     The name of the Docker manifest.  This is often of the
 #     form "registry/image:tag".
 #   DOCKER_USERNAME
@@ -48,12 +50,14 @@ docker/fatmanifest/build: docker/fatmanifest/config
 	$(call assert-set,DOCKER_PLATFORMS)
 	$(call assert-set,TARGET_DOCKER_REGISTRY)
 	$(eval IMAGES := $(foreach platform, $(DOCKER_PLATFORMS), $(DOCKER_IMAGE_NAME)_$(platform)))
-	echo $(DOCKER_PASSWORD) | $(DOCKER) --config $(DOCKER_CFG_FOLDER) login -u $(DOCKER_USERNAME) --password-stdin $(TARGET_DOCKER_REGISTRY)
-	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest create $(DOCKER_IMAGE_NAME) $(IMAGES)
+	@echo $(DOCKER_PASSWORD) | $(DOCKER) --config $(DOCKER_CFG_FOLDER) login -u $(DOCKER_USERNAME) --password-stdin $(TARGET_DOCKER_REGISTRY)
+	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest create --amend $(DOCKER_IMAGE_NAME) $(IMAGES)
+	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest create --amend $(DOCKER_IMAGE_LATEST) $(IMAGES)
 	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest inspect $(DOCKER_IMAGE_NAME)
 
 	# Use --purge to remove local cache of manifest lists.
 	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest push --purge $(DOCKER_IMAGE_NAME)
+	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest push --purge $(DOCKER_IMAGE_LATEST)
 	rm -rf $(DOCKER_CFG_FOLDER)
 
 # Retags the current image to meet conventions and pushes
