@@ -26,6 +26,8 @@ github/webhook-setup:
 	$(call assert-set,GITHUB_TOKEN)
 	$(call assert-set,GITHUB_REPO)
 	$(call assert-set,GITHUB_REPO_OWNER)
+	$(call assert-set,RELEASE_CUTTER_URL)
+	$(call assert-set,RELEASE_CUTTER_SECRET)
 	curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" \
 	-d '{"name": "web","events": [ "issues" ],"config": {"url": "${RELEASE_CUTTER_URL}","content_type": "json","insecure_ssl": "0","secret": "${RELEASE_CUTTER_SECRET}"}}' \
 	https://github.ibm.com/api/v3/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/hooks
