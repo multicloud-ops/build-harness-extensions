@@ -1,6 +1,9 @@
 
 ## Protect all release and master branches
 github/branch-protect:
+	$(call assert-set,GITHUB_TOKEN)
+	$(call assert-set,GITHUB_REPO)
+	$(call assert-set,GITHUB_REPO_OWNER)
 	$(shell curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" https://github.ibm.com/api/v3/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/branches \
 	| jq -rc '.[]' \
 	| while read branches ; do (printf "$$branches" | jq -r '.name' | grep release) >> branches ;  done)
@@ -20,12 +23,24 @@ github/update-tag:
 
 ## Setup the webhook for the release-cutter bot
 github/webhook-setup:
+	$(call assert-set,GITHUB_TOKEN)
+	$(call assert-set,GITHUB_REPO)
+	$(call assert-set,GITHUB_REPO_OWNER)
+	$(call assert-set,RELEASE_CUTTER_URL)
+	$(call assert-set,RELEASE_CUTTER_SECRET)
 	curl -sSL -H "Authorization: token ${GITHUB_TOKEN}" \
 	-d '{"name": "web","events": [ "issues" ],"config": {"url": "${RELEASE_CUTTER_URL}","content_type": "json","insecure_ssl": "0","secret": "${RELEASE_CUTTER_SECRET}"}}' \
 	https://github.ibm.com/api/v3/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/hooks
 
 ## Enable this repo on travis and add Docker username/password environment variables
 github/travis-setup:
+	$(call assert-set,GITHUB_TOKEN)
+	$(call assert-set,TRAVIS_TOKEN)
+	$(call assert-set,GITHUB_REPO)
+	$(call assert-set,GITHUB_REPO_OWNER)
+	$(call assert-set,DOCKER_PASSWORD)
+	$(call assert-set,DOCKER_USERNAME)
+	$(call assert-set,TARGET_DOCKER_REGISTRY)
 	curl -X POST -sSL -H "Authorization: token ${TRAVIS_TOKEN}" \
 	-H "Travis-API-Version: 3" \
 	https://travis.ibm.com/api/repo/${GITHUB_REPO_OWNER}%2F${GITHUB_REPO}/activate
