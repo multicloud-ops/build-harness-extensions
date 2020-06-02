@@ -33,7 +33,7 @@ github/webhook-setup:
 	https://github.ibm.com/api/v3/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO}/hooks
 
 ## Setup the webhook for the cherry-picker bot
-github/webhook-setup:
+github/webhook-cherrypick-setup:
 	$(call assert-set,GITHUB_TOKEN)
 	$(call assert-set,GITHUB_REPO)
 	$(call assert-set,GITHUB_REPO_OWNER)
