@@ -8,6 +8,8 @@ endif
 ifeq ($(SEMVER_RUNNING_IN_CI), true)
     export SEMVERSION_GIT_CANONICAL=$(shell $(GIT) describe --always  --abbrev=10)
     SEMVERSION_CANONICAL_APPEND_DEVHASH = false
+    # Some, if not all CIs will do shallow clones that can interfere with the versioning scheme. 
+    $(GIT) fetch --unshallow
 else
     export SEMVERSION_GIT_CANONICAL=$(shell $(GIT) describe --always  --abbrev=10 --dirty)
 endif
