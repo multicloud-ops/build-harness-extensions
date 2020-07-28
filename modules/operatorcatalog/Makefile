@@ -22,28 +22,25 @@ operatorcatalog/checkout:
 	$(GIT) clone -b $(OP_CATALOG_BRANCH) $(OP_CATALOG_REPO) $(OPCATALOG_PATH)
 
 .PHONY: operatorcatalog/local/createrelease
-## Create a new release version based on local CSV file
+## Create a new release version $(OPERATOR_VERSION) based on local CSV file, overriding images as specified in images-override.yaml
 operatorcatalog/local/createrelease:
 	$(call assert-set,OPCATALOG_LOCAL_RELEASE_IMG)
 	$(call assert-set,OPERATOR_NAME)
 	$(call assert-set,OPERATOR_VERSION)
 	$(call assert-set,OPCATALOG_PATH)
-	# To come $(DOCKER) run -it $(OPCATALOG_LOCAL_RELEASE_IMG) 
 	@mkdir -p $(OPCATALOG_PATH)
-	# python3 ../../operator-catalog/docker/release/local-release.py create-release $(OPERATOR_NAME) --release $(OPERATOR_VERSION) --catalog-path $(OPCATALOG_PATH) $(OPCATALOG_AUTOREPLACE) $(OPERATOR_VERSION_SNAPSHOT) 
 	$(DOCKER) run -it -v $(OPCATALOG_PATH):/data -v $(OPERATOR_CSV):/manifests/local_csv.yaml -v $(PWD)/images-override.yaml:/overrides/images-override.yaml $(OPCATALOG_LOCAL_RELEASE_IMG)  \
 		create-release $(OPERATOR_NAME) --release $(OPERATOR_VERSION) \
 		--catalog-path /data --csv /manifests/local_csv.yaml --images /overrides/images-override.yaml \
 		$(OPCATALOG_AUTOREPLACE) $(OPERATOR_VERSION_SNAPSHOT) 
 
 .PHONY: operatorcatalog/local/overridetemplate
-## Write out an image override template based on local CSV information
+## Read operators CSV from $(OP_CATALOG_BRANCH) of operator catalog to write out an image override template file $(OP)
 operatorcatalog/local/overridetemplate:
 	$(call assert-set,OPCATALOG_LOCAL_RELEASE_IMG)
 	$(call assert-set,GITHUB_TOKEN)
 	$(call assert-set,OPERATOR_NAME)
 	$(call assert-set,OP_CATALOG_BRANCH)
-	# python3 ../../operator-catalog/docker/release/local-release.py create-images-override-template $(OPERATOR_NAME) --branch $(OP_CATALOG_BRANCH)
 	$(DOCKER) run -it -e GITHUB_TOKEN -v $(PWD):/data $(OPCATALOG_LOCAL_RELEASE_IMG) create-images-override-template $(OPERATOR_NAME) -i /data/images-override.yaml --branch $(OP_CATALOG_BRANCH)
 
 .PHONY: operatorcatalog/local/build
