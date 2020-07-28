@@ -1,6 +1,6 @@
 OPCATALOG_LOCAL_RELEASE_IMG := quay.io/multicloudops/opcatalog-local-release:latest
 OPCATALOG_PATH ?= $(BUILD_HARNESS_EXTENSIONS_PATH)/vendor/operator-catalog
-OPERATOR_NAME ?= 
+OPERATOR_NAME ?= $(shell ls -d deploy/olm-catalog/* | awk -F/ '{print$$3}')
 OPERATOR_CSV ?= $(PWD)/deploy/olm-catalog/$(OPERATOR_NAME)/manifests/$(OPERATOR_NAME).clusterserviceversion.yaml
 OP_CATALOG_REPO ?=
 OP_CATALOG_BRANCH ?= release-$(SEMVERSION_MAJOR_MINOR)-snapshot
