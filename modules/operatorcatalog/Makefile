@@ -1,6 +1,6 @@
 OPCATALOG_LOCAL_RELEASE_IMG := quay.io/multicloudops/opcatalog-local-release:latest
 OPCATALOG_PATH ?= $(BUILD_HARNESS_EXTENSIONS_PATH)/vendor/operator-catalog
-OPERATOR_NAME ?= $(shell ls -d deploy/olm-catalog/* | awk -F/ '{print$$3}')
+export OPERATOR_NAME ?= $(shell ls -d deploy/olm-catalog/* | awk -F/ '{print$$3}')
 OPERATOR_CSV ?= $(PWD)/deploy/olm-catalog/$(OPERATOR_NAME)/manifests/$(OPERATOR_NAME).clusterserviceversion.yaml
 OP_CATALOG_REPO ?=
 OP_CATALOG_BRANCH ?= release-$(SEMVERSION_MAJOR_MINOR)-snapshot
@@ -22,14 +22,14 @@ operatorcatalog/checkout:
 	$(GIT) clone -b $(OP_CATALOG_BRANCH) $(OP_CATALOG_REPO) $(OPCATALOG_PATH)
 
 .PHONY: operatorcatalog/local/createrelease
-## Create a new release version $(OPERATOR_VERSION) based on local CSV file, overriding images as specified in images-override.yaml
+## Create a new release $(OPERATOR_VERSION) from local CSV file, overriding images based on images-override.yaml
 operatorcatalog/local/createrelease:
 	$(call assert-set,OPCATALOG_LOCAL_RELEASE_IMG)
 	$(call assert-set,OPERATOR_NAME)
 	$(call assert-set,OPERATOR_VERSION)
 	$(call assert-set,OPCATALOG_PATH)
-	@mkdir -p $(OPCATALOG_PATH)
-	$(DOCKER) run -it -v $(OPCATALOG_PATH):/data -v $(OPERATOR_CSV):/manifests/local_csv.yaml -v $(PWD)/images-override.yaml:/overrides/images-override.yaml $(OPCATALOG_LOCAL_RELEASE_IMG)  \
+	@mkdir -p $(OPCATALOG_PATH)/catalog/manifests/$(OPERATOR_NAME)
+	$(DOCKER) run -it -v $(OPCATALOG_PATH):/data -v $(shell dirname $(OPERATOR_CSV)):/manifests -v $(OPERATOR_CSV):/manifests/local_csv.yaml -v $(PWD)/images-override.yaml:/overrides/images-override.yaml $(OPCATALOG_LOCAL_RELEASE_IMG)  \
 		create-release $(OPERATOR_NAME) --release $(OPERATOR_VERSION) \
 		--catalog-path /data --csv /manifests/local_csv.yaml --images /overrides/images-override.yaml \
 		$(OPCATALOG_AUTOREPLACE) $(OPERATOR_VERSION_SNAPSHOT) 
