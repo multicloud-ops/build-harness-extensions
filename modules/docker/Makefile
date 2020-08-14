@@ -18,6 +18,13 @@ TARGET_VERSION_LATEST ?= $(SEMVERSION_MAJOR_MINOR)-latest
 
 DOCKER_IMAGE_LATEST ?= $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_LATEST)
 
+OPERATOR_YAML := deploy/operator.yaml
+TAG_FOR_DEV := $(shell git rev-parse --abbrev-ref HEAD)
+#Old image tag we want to change
+O=$(APP):latest
+#New image tag to change to
+N=$(APP):$(TAG_FOR_DEV)
+
 # Builds an architecture-specific Docker image.
 #
 # Variables:
@@ -99,6 +106,15 @@ docker/image/feature/build-and-push:
 	$(call assert-set,TARGET_DOCKER_REGISTRY)
 	$(SELF) docker/build TARGET_VERSION:=$(shell git rev-parse --abbrev-ref HEAD)
 	@$(SELF) -s docker/image/push TARGET_VERSION=$(shell git rev-parse --abbrev-ref HEAD)
+
+.PHONY: docker/image/feature/change-image
+docker/image/feature/change-image:
+        sed -i "s|$O|$N|" $(OPERATOR_YAML)
+
+.PHONY: docker/image/feature/change-image-back
+docker/image/feature/change-image-back:
+        sed -i "s|$N|$O|" $(OPERATOR_YAML)
+
 
 # Logs in to a Docker registry.
 #
