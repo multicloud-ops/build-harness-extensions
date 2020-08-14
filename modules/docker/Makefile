@@ -91,7 +91,7 @@ docker/image/tag-and-push:
 	@$(SELF) -s docker/image/push TARGET_VERSION=$(TARGET_VERSION_ARCH)
 	@$(SELF) -s docker/image/push TARGET_VERSION=$(TARGET_VERSION_LATEST)
 
-
+.PHONY: docker/image/feature/build-and-push
 docker/image/feature/build-and-push:
 	$(call assert-set,DOCKER)
 	$(call assert-set,DOCKER_USERNAME)
