@@ -93,12 +93,12 @@ docker/image/tag-and-push:
 
 
 docker/image/feature/build-and-push:
-        $(call assert-set,DOCKER)
-        $(call assert-set,DOCKER_USERNAME)
-        $(call assert-set,DOCKER_PASSWORD)
-        $(call assert-set,TARGET_DOCKER_REGISTRY)
-        $(SELF) docker/build TARGET_VERSION:=$(shell git rev-parse --abbrev-ref HEAD)
-        @$(SELF) -s docker/image/push TARGET_VERSION=$(shell git rev-parse --abbrev-ref HEAD)
+	$(call assert-set,DOCKER)
+	$(call assert-set,DOCKER_USERNAME)
+	$(call assert-set,DOCKER_PASSWORD)
+	$(call assert-set,TARGET_DOCKER_REGISTRY)
+	$(SELF) docker/build TARGET_VERSION:=$(shell git rev-parse --abbrev-ref HEAD)
+	@$(SELF) -s docker/image/push TARGET_VERSION=$(shell git rev-parse --abbrev-ref HEAD)
 
 # Logs in to a Docker registry.
 #
