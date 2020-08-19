@@ -1,0 +1,12 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: ${OPERATOR_NAME}
+  namespace: openshift-marketplace
+spec:
+  displayName: $OPERATOR_NAME Test
+  sourceType: grpc
+  image: $OPCATALOG_IMAGE
+  updateStrategy:
+    registryPoll:
+      interval: 45m
