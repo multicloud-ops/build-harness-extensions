@@ -18,6 +18,8 @@ TARGET_VERSION_LATEST ?= $(SEMVERSION_MAJOR_MINOR)-latest
 
 DOCKER_IMAGE_LATEST ?= $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_LATEST)
 
+IMAGE_ARCH_SEPARATOR ?= -
+
 # Builds an architecture-specific Docker image.
 #
 # Variables:
@@ -58,7 +60,7 @@ docker/fatmanifest/build: docker/fatmanifest/config
 	$(call assert-set,DOCKER_IMAGE_NAME)
 	$(call assert-set,DOCKER_PLATFORMS)
 	$(call assert-set,TARGET_DOCKER_REGISTRY)
-	$(eval IMAGES := $(foreach platform, $(DOCKER_PLATFORMS), $(DOCKER_IMAGE_NAME)_$(platform)))
+	$(eval IMAGES := $(foreach platform, $(DOCKER_PLATFORMS), $(DOCKER_IMAGE_NAME)$(IMAGE_ARCH_SEPARATOR)$(platform)))
 	@echo $(DOCKER_PASSWORD) | $(DOCKER) --config $(DOCKER_CFG_FOLDER) login -u $(DOCKER_USERNAME) --password-stdin $(TARGET_DOCKER_REGISTRY)
 	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest create --amend $(DOCKER_IMAGE_NAME) $(IMAGES)
 	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest create --amend $(DOCKER_IMAGE_LATEST) $(IMAGES)
