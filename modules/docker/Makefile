@@ -73,7 +73,7 @@ docker/fatmanifest/build: docker/fatmanifest/config
 
 .PHONY: docker/arch/manifest/build
 docker/arch/manifest/build: docker/fatmanifest/config
-  $(call assert-set,DOCKER)
+	$(call assert-set,DOCKER)
 	$(call assert-set,DOCKER_IMAGE_NAME)
 	$(call assert-set,DOCKER_PLATFORMS)
 	$(eval IMAGES := $(foreach platform, $(DOCKER_PLATFORMS), $(DOCKER_IMAGE_NAME)$(IMAGE_ARCH_SEPARATOR)$(platform)))
@@ -109,7 +109,7 @@ docker/image/push/release-latest:
 	$(call assert-set,TARGET_DOCKER_REGISTRY)
 	@echo "Retagging $(TARGET_VERSION) to $(TARGET_VERSION_LATEST)"
 	@$(DOCKER) tag $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION) $(TARGET_DOCKER_REGISTRY)/$(IMAGE_NAME):$(TARGET_VERSION_LATEST)
-  @$(SELF) -s docker/image/push TARGET_VERSION=$(TARGET_VERSION_LATEST)
+	@$(SELF) -s docker/image/push TARGET_VERSION=$(TARGET_VERSION_LATEST)
 
 # Retags the current image to meet conventions and pushes
 # the image to the target Docker registry.
