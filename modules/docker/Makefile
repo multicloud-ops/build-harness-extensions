@@ -71,7 +71,18 @@ docker/fatmanifest/build: docker/fatmanifest/config
 	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest push --purge $(DOCKER_IMAGE_LATEST)
 	rm -rf $(DOCKER_CFG_FOLDER)
 
+# Builds a "fat" (multi-platform) Docker manifest.
+# Target docker/registry/login should be called first.
+#
+# Variables:
+#   DOCKER_IMAGE_NAME
+#     The name of the Docker manifest.  This is often of the
+#     form "registry/image:tag".
+#   DOCKER_PLATFORMS
+#     The platforms to include in the manifest.  Default:
+#     "amd64 ppc64le s390x".
 .PHONY: docker/arch/manifest/build
+## Builds a "fat" (multi-platform) Docker manifest
 docker/arch/manifest/build: docker/fatmanifest/config
 	$(call assert-set,DOCKER)
 	$(call assert-set,DOCKER_IMAGE_NAME)
@@ -81,7 +92,20 @@ docker/arch/manifest/build: docker/fatmanifest/config
 	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest create --amend $(DOCKER_IMAGE_LATEST) $(IMAGES)
 	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest inspect $(DOCKER_IMAGE_NAME)
 
+# Pushes a "fat" (multi-platform) Docker manifest.
+#
+# Variables:
+#   DOCKER_IMAGE_NAME
+#     The name of the Docker manifest.  This is often of the
+#     form "registry/image:tag".
+#   DOCKER_USERNAME
+#     The user name with which to log in to the registry.
+#   DOCKER_PASSWORD
+#     The password for the Docker user name.
+#   TARGET_DOCKER_REGISTRY
+#     The name of the Docker registry.
 .PHONY: docker/arch/manifest/push
+## Pushes a "fat" (multi-platform) Docker manifest
 docker/arch/manifest/push: docker/fatmanifest/config
 	$(call assert-set,DOCKER)
 	$(call assert-set,DOCKER_IMAGE_NAME)
@@ -101,7 +125,18 @@ docker/arch/manifest/push/release-latest:
 	# Use --purge to remove local cache of manifest lists.
 	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest push --purge $(DOCKER_IMAGE_LATEST)
 
+# Retags the current image to meet conventions and pushes
+# the image to the target Docker registry.
+#
+# Variables:
+#   DOCKER_USERNAME
+#     The user name with which to log in to the registry.
+#   DOCKER_PASSWORD
+#     The password for the Docker user name.
+#   TARGET_DOCKER_REGISTRY
+#     The name of the Docker registry.
 .PHONY: docker/image/push/release-latest
+## Retags the current image build to conventions and pushes to the target Docker registry
 docker/image/push/release-latest:
 	$(call assert-set,DOCKER)
 	$(call assert-set,DOCKER_USERNAME)
