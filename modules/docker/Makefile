@@ -144,9 +144,10 @@ docker/image/push/release-latest:
 #     The name of the Docker registry.
 .PHONY: docker/image/tag-and-push
 ## *DEPRECATED* Retags the current image build to conventions and pushes to the target Docker registry
-docker/image/tag-and-push: docker/image/push/release-latest
+docker/image/tag-and-push:
 	@echo "DEPRECATED: docker/image/tag-and-push. Please use the following targets: docker/image/push and docker/image/push/release-latest"
-	$(SELF) docker/image/push TARGET_VERSION:=$(TARGET_VERSION_ARCH)
+	@$(SELF) -s docker/image/push TARGET_VERSION:=$(TARGET_VERSION_ARCH)
+	@$(SELF) -s docker/image/push/release-latest TARGET_VERSION:=$(TARGET_VERSION_ARCH)
 
 .PHONY: docker/image/feature/build-and-push
 docker/image/feature/build-and-push:
