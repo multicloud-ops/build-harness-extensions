@@ -97,8 +97,6 @@ docker/arch/manifest/push: docker/fatmanifest/config
 	$(call assert-set,DOCKER)
 	$(call assert-set,DOCKER_IMAGE_NAME)
 	$(call assert-set,DOCKER_PLATFORMS)
-	$(call assert-set,TARGET_DOCKER_REGISTRY)
-	@echo $(DOCKER_PASSWORD) | $(DOCKER) --config $(DOCKER_CFG_FOLDER) login -u $(DOCKER_USERNAME) --password-stdin $(TARGET_DOCKER_REGISTRY)
 	# Use --purge to remove local cache of manifest lists.
 	$(DOCKER) --config $(DOCKER_CFG_FOLDER) manifest push --purge $(DOCKER_IMAGE_NAME)
 
@@ -180,5 +178,10 @@ docker/registry/login:
 
 .PHONY: docker/fatmanifest/config
 docker/fatmanifest/config:
+	$(call assert-set,DOCKER)
+	$(call assert-set,DOCKER_USERNAME)
+	$(call assert-set,DOCKER_PASSWORD)
+	$(call assert-set,TARGET_DOCKER_REGISTRY)
 	mkdir -p $(DOCKER_CFG_FOLDER)
 	echo '{ "experimental": "enabled" }' > $(DOCKER_CFG_FOLDER)/config.json
+	@echo $(DOCKER_PASSWORD) | $(DOCKER) --config $(DOCKER_CFG_FOLDER) login -u $(DOCKER_USERNAME) --password-stdin $(TARGET_DOCKER_REGISTRY)
